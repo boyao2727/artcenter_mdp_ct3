@@ -1,0 +1,92 @@
+{
+  "recovery-early": {
+    "temperature": 8,
+    "sunlight": 45,
+    "counts": [
+      0,
+      0,
+      720
+    ],
+    "clock": 133.9360000000093
+  },
+  "liquid-still": {
+    "temperature": 48,
+    "sunlight": 45,
+    "counts": [
+      0,
+      720,
+      0
+    ],
+    "clock": 30.033600000000657
+  },
+  "vapor": {
+    "temperature": 95,
+    "sunlight": 85,
+    "counts": [
+      0,
+      0,
+      720
+    ],
+    "clock": 133.90260000000927
+  },
+  "local": {
+    "temperature": 48,
+    "sunlight": 45,
+    "counts": [
+      0,
+      665,
+      55
+    ],
+    "clock": 47.79290000000606
+  },
+  "solid": {
+    "temperature": 8,
+    "sunlight": 45,
+    "counts": [
+      720,
+      0,
+      0
+    ],
+    "clock": 99.24430000000397
+  },
+  "solid-still": {
+    "temperature": 8,
+    "sunlight": 45,
+    "counts": [
+      720,
+      0,
+      0
+    ],
+    "clock": 94.61680000000037
+  },
+  "liquid": {
+    "temperature": 48,
+    "sunlight": 45,
+    "counts": [
+      0,
+      720,
+      0
+    ],
+    "clock": 34.583600000003784
+  },
+  "recovery-late": {
+    "temperature": 8,
+    "sunlight": 45,
+    "counts": [
+      720,
+      0,
+      0
+    ],
+    "clock": 193.9527000000059
+  },
+  "vapor-still": {
+    "temperature": 95,
+    "sunlight": 85,
+    "counts": [
+      0,
+      0,
+      720
+    ],
+    "clock": 129.27770000000226
+  }
+}
