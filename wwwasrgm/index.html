@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Random Drink — An API Chain</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin:0; min-height:100vh; padding:48px 24px; background:#f8f4ec; color:#263d32; font-family:system-ui,sans-serif; }
+    main { width:100%; max-width:560px; margin:0 auto; }
+    h1 { margin:0 0 12px; font-size:clamp(2rem,7vw,3rem); }
+    p { line-height:1.6; }
+    button { padding:14px 36px; border:0; border-radius:999px; background:#263d32; color:white; font:inherit; font-size:1.1rem; cursor:pointer; }
+    button:hover { background:#3c5b48; }
+    button:focus-visible,a:focus-visible,summary:focus-visible { outline:3px solid #bd681f; outline-offset:4px; }
+    button:disabled { opacity:.6; cursor:wait; }
+    [hidden] { display:none!important; }
+    #status { min-height:1.6em; font-size:.95rem; }
+    article { padding:24px; background:white; border-radius:20px; }
+    img { display:block; width:100%; height:auto; border-radius:12px; }
+    h2 { font-size:1.8rem; line-height:1.2; overflow-wrap:anywhere; }
+    h3 { font-size:1.15rem; }
+    li { padding-bottom:6px; }
+    #instructions { white-space:pre-line; }
+    .chain-step { margin-top:32px; padding-top:24px; border-top:1px solid #ddd; }
+    .chain-step h3 { margin-top:0; }
+    .step-label { font-size:.75rem; color:#5b6d60; letter-spacing:.06em; text-transform:uppercase; }
+    .source,.credit,.small { font-size:.8rem; color:#596b5f; overflow-wrap:anywhere; }
+    .next { margin-top:24px; padding:14px 16px; border-left:3px solid #bd681f; background:#f8f4ec; border-radius:0 8px 8px 0; }
+    .next p { margin:5px 0 0; font-size:.9rem; }
+    .next strong { font-size:.8rem; }
+    .step-progress { font-size:.85rem; color:#596b5f; }
+    .request { margin-top:16px; font-size:.75rem; color:#596b5f; }
+    .request summary { cursor:pointer; }
+    .request a { display:block; margin-top:8px; overflow-wrap:anywhere; line-height:1.6; }
+    #book-image { max-width:300px; border-radius:6px; }
+    #swatch { min-height:220px; border-radius:12px; padding:24px; display:flex; align-items:flex-end; font-size:1.3rem; }
+    .actions { display:flex; gap:10px; flex-wrap:wrap; }
+    .secondary { padding:10px 20px; background:transparent; border:1px solid #263d32; color:#263d32; font-size:.9rem; }
+    .secondary:hover { background:#edece2; }
+    #problem { margin-top:24px; padding:16px; background:#f8f4ec; border-radius:12px; }
+    #problem p { margin-top:0; }
+    #ending { border-top:1px solid #ddd; margin-top:32px; padding-top:20px; }
+    footer { margin-top:24px; font-size:.8rem; line-height:1.7; }
+    a { color:inherit; }
+    details.about { margin-top:20px; }
+    details.about summary { cursor:pointer; }
+    details.about p { font-size:.85rem; }
+    code { font-family:ui-monospace,monospace; overflow-wrap:anywhere; }
+    @media(max-width:400px) { body { padding:32px 18px; } article { padding:20px; } }
+  </style>
+</head>
+<body>
+<main>
+  <h1>Random drink</h1>
+  <p>One click. A drink leads to a sky, a painting, a colour, and a book.</p>
+  <div class="actions"><button id="start" type="button">start</button><button id="stop" type="button" class="secondary" hidden>stop here</button></div>
+  <p id="status" role="status" aria-live="polite">Each result supplies the next request. Scroll down as the chain unfolds.</p>
+
+  <article id="chain" aria-label="A chain of API results" hidden>
+    <section id="drink" aria-label="Drink recipe" hidden>
+      <p class="step-label">01 · TheCocktailDB</p><p class="step-progress" id="drink-progress"></p>
+      <div id="drink-content" hidden>
+        <img id="photo" alt="" hidden><p class="small" id="photo-note" hidden></p>
+        <h2 id="name"></h2><p id="details"></p>
+        <h3>Ingredients</h3><ul id="ingredients"></ul>
+        <h3>Instructions</h3><p id="instructions"></p>
+        <div class="next"><strong>Next instruction → NASA APOD</strong><p id="drink-next"></p></div>
+      </div>
+      <details class="request"><summary>See the actual API request</summary><div id="drink-requests"></div></details>
+    </section>
+
+    <section id="sky" class="chain-step" aria-label="Astronomy Picture of the Day" hidden>
+      <p class="step-label">02 · NASA APOD</p><p class="step-progress" id="sky-progress"></p>
+      <div id="sky-content" hidden>
+        <h3>Astronomy Picture of the Day</h3><p id="apod-date"></p><h2 id="apod-title"></h2>
+        <img id="apod-image" alt="" hidden><p class="small" id="apod-image-note" hidden></p>
+        <p id="apod-explanation"></p><p class="credit" id="apod-credit"></p>
+        <a id="apod-link" class="source" target="_blank" rel="noopener noreferrer" hidden>View on NASA ↗</a>
+        <div class="next"><strong>Next instruction → Art Institute of Chicago</strong><p id="sky-next"></p></div>
+      </div>
+      <details class="request"><summary>See the actual API requests</summary><div id="sky-requests"></div></details>
+    </section>
+
+    <section id="art" class="chain-step" aria-label="A randomly chosen matching artwork" hidden>
+      <p class="step-label">03 · Art Institute of Chicago</p><p class="step-progress" id="art-progress"></p>
+      <div id="art-content" hidden>
+        <h3>A word becomes an artwork</h3><p id="art-query" class="small"></p>
+        <img id="art-image" alt="" hidden><p id="art-image-note" class="small" hidden></p>
+        <h2 id="art-title"></h2><p id="art-artist"></p><p id="art-description"></p><p id="art-credit" class="credit"></p>
+        <a id="art-link" class="source" target="_blank" rel="noopener noreferrer" hidden>View the artwork ↗</a>
+        <div class="next"><strong>Next instruction → The Color API</strong><p id="art-next"></p></div>
+      </div>
+      <details class="request"><summary>See the actual API requests</summary><div id="art-requests"></div></details>
+    </section>
+
+    <section id="colour" class="chain-step" aria-label="The name of the artwork’s dominant colour" hidden>
+      <p class="step-label">04 · The Color API</p><p class="step-progress" id="colour-progress"></p>
+      <div id="colour-content" hidden>
+        <h3>A colour becomes a name</h3><div id="swatch" role="img" aria-label="Colour swatch"></div>
+        <h2 id="colour-name"></h2><p id="colour-description"></p>
+        <div class="next"><strong>Next instruction → Open Library</strong><p id="colour-next"></p></div>
+      </div>
+      <details class="request"><summary>See the actual API request</summary><div id="colour-requests"></div></details>
+    </section>
+
+    <section id="book" class="chain-step" aria-label="A randomly chosen matching book" hidden>
+      <p class="step-label">05 · Open Library</p><p class="step-progress" id="book-progress"></p>
+      <div id="book-content" hidden>
+        <h3>A colour name becomes a book</h3><p id="book-query" class="small"></p>
+        <img id="book-image" alt="" hidden><p id="book-image-note" class="small" hidden></p>
+        <h2 id="book-title"></h2><p id="book-author"></p><p id="book-year"></p>
+        <a id="book-link" class="source" target="_blank" rel="noopener noreferrer" hidden>View on Open Library ↗</a>
+      </div>
+      <details class="request"><summary>See the actual API requests</summary><div id="book-requests"></div></details>
+    </section>
+
+    <div id="problem" role="alert" hidden><p id="problem-text"></p><button id="retry" class="secondary" type="button">retry this step</button></div>
+    <div id="ending" hidden><p id="ending-text"></p></div>
+  </article>
+
+  <footer>
+    Data from <a href="https://www.thecocktaildb.com/">TheCocktailDB</a>, <a href="https://science.nasa.gov/">NASA</a>, <a href="https://api.artic.edu/docs/">Art Institute of Chicago</a>, <a href="https://www.thecolorapi.com/docs">The Color API</a>, and <a href="https://openlibrary.org/">Open Library</a>.
+    <details class="about"><summary>About this chain</summary>
+      <p>A digital Rube Goldberg machine made of actual requests and responses. A random drink’s edit date selects a NASA archive entry. Words in that entry search artwork titles. One matching public-domain artwork is chosen at random. Its dominant HSL colour is sent to a colour-naming service; the returned name searches book titles, and one matching book is chosen at random.</p>
+      <p>When an archive title word finds no usable image, the machine tries another word from that title, then words from its explanation. When the full colour name finds no book with a cover, it tries individual words in that same name. Each change is shown beside the request. Those are search matches, not claims that the objects are historically related.</p>
+      <p>The date is the recipe record’s last edit date, not the drink’s invention date. If it is missing or unusable, the drink ID supplies a labelled fallback date within the APOD archive. NASA video entries keep their title and explanation; the chain can continue without a still image.</p>
+      <p>There are no simulated responses. If a service fails, the chain pauses there and keeps previous results. Retry repeats that step. Stop aborts the current request. The colour swatch is drawn locally from the returned colour data; other images come from their respective sources.</p>
+      <p>API discovery: <a href="https://github.com/public-apis/public-apis">public-apis/public-apis</a>. This is a local prototype for WWW as a Rube Goldberg machine.</p>
+    </details>
+  </footer>
+</main>
+<script>
+(() => {
+  'use strict';
+  const $ = id => document.getElementById(id);
+  const names = ['drink', 'sky', 'art', 'colour', 'book'];
+  const state = { index:0, busy:false, aborted:false, controller:null, data:{}, lastArtRequest:0, lastBookRequest:0 };
+  const stopwords = new Set('the a an and or in on of to for from with by at as is are was were its this that these those into over under through more most many very which what when where how has have had it not but can will than their there they our your one two image picture day apod nasa ngc messier astronomy astronomical explanation credit copyright view see seen also about known shows shown showing taken using above below across toward around during'.split(' '));
+  const set = (id, text) => { $(id).textContent = text; };
+  const plain = value => new DOMParser().parseFromString(String(value || ''), 'text/html').body.textContent.trim();
+  const random = values => values[Math.floor(Math.random()*values.length)];
+  function shuffled(values) { const result=[...values]; for(let i=result.length-1;i>0;i--) { const j=Math.floor(Math.random()*(i+1)); [result[i],result[j]]=[result[j],result[i]]; } return result; }
+  function words(text) { return [...new Set((String(text).toLowerCase().match(/[a-z]{3,24}/g)||[]).filter(word=>!stopwords.has(word)))]; }
+  function skyWords(apod) {
+    const title = shuffled(words(apod.title));
+    const explanation = words(plain(apod.explanation));
+    const visual = new Set('moon sun sky night light star stars earth cloud clouds water blue red green gold silver black white sea mountain landscape forest flower flowers fire bird birds tree trees'.split(' '));
+    const extra = shuffled(explanation.filter(word=>visual.has(word)));
+    const remaining = shuffled(explanation.filter(word=>!visual.has(word)));
+    return [...new Set([...title.slice(0,3),...extra,...title.slice(3),...remaining])].slice(0,6);
+  }
+  function colourWords(name) { return [...new Set([name,...shuffled(words(name))])].slice(0,4); }
+  function checkedURL(value) { try { const url=new URL(value); return url.protocol==='https:'?url.href:null; } catch { return null; } }
+  function link(id,url) { const value=checkedURL(url); $(id).hidden=!value; if(value) $(id).href=value; else $(id).removeAttribute('href'); }
+  function noteImage(id,url,alt,noteId) {
+    const img=$(id), note=$(noteId); img.hidden=true; note.hidden=true; img.onload=null; img.onerror=null; img.removeAttribute('src'); img.alt=alt;
+    const safe=checkedURL(url);
+    if(!safe) { note.textContent='No still image was supplied. The returned information can still trigger the next request.'; note.hidden=false; return; }
+    img.onload=()=>{img.hidden=false;};
+    img.onerror=()=>{img.hidden=true;note.textContent='The image could not load. The returned information is still available below.';note.hidden=false;};
+    img.referrerPolicy='no-referrer'; img.src=safe;
+  }
+  function showStep(name,message) { $(name).hidden=false; set(name+'-progress',message); set('status',`${names.indexOf(name)+1}/5 — ${message}`); }
+  function requestLink(name,url) {
+    const a=document.createElement('a'); a.href=url; a.target='_blank'; a.rel='noopener noreferrer'; a.textContent=url; $(name+'-requests').append(a);
+  }
+  function checkStopped() { if(state.aborted) throw new DOMException('Stopped by you.','AbortError'); }
+  async function spacing(service) {
+    const key=service==='art'?'lastArtRequest':'lastBookRequest';
+    const remaining=1100-(Date.now()-state[key]);
+    if(remaining>0) await new Promise(resolve=>setTimeout(resolve,remaining));
+    checkStopped(); state[key]=Date.now();
+  }
+  async function json(name,url,{timeout=15000,spaced=false}={}) {
+    checkStopped(); if(spaced) await spacing(name==='art'?'art':'book');
+    requestLink(name,url);
+    const controller=new AbortController(); state.controller=controller;
+    const timer=setTimeout(()=>controller.abort(),timeout);
+    try {
+      const response=await fetch(url,{signal:controller.signal,credentials:'omit',referrerPolicy:'no-referrer'});
+      if(!response.ok) throw new Error(`The service returned HTTP ${response.status}.`);
+      const data=await response.json(); checkStopped(); return data;
+    } catch(error) {
+      if(error.name==='AbortError'&&!state.aborted) throw new Error('The service did not respond before the request timed out.');
+      throw error;
+    } finally {clearTimeout(timer);if(state.controller===controller)state.controller=null;}
+  }
+  function chooseDate(drink) {
+    const first=Date.UTC(1995,5,16), now=new Date(), today=Date.UTC(now.getUTCFullYear(),now.getUTCMonth(),now.getUTCDate());
+    const date=drink.dateModified?.match(/^(\d{4}-\d{2}-\d{2})/)?.[1];
+    const ms=date?Date.parse(date+'T00:00:00Z'):NaN;
+    if(Number.isFinite(ms)&&ms>=first&&ms<today&&new Date(ms).toISOString().slice(0,10)===date) return {date,fallback:false};
+    let hash=0;for(const char of String(drink.idDrink||drink.strDrink))hash=(Math.imul(hash,31)+char.charCodeAt(0))>>>0;
+    const days=Math.max(1,Math.floor((today-first)/86400000));
+    return {date:new Date(first+(hash%days)*86400000).toISOString().slice(0,10),fallback:true};
+  }
+  async function getDrink() {
+    showStep('drink','Finding a random drink…');
+    const data=await json('drink','https://www.thecocktaildb.com/api/json/v1/1/random.php');
+    const drink=data.drinks?.[0]; if(!drink?.strDrink)throw new Error('No drink was returned.');
+    const date=chooseDate(drink);state.data.drink=drink;state.data.date=date;
+    set('name',drink.strDrink);set('details',[drink.strCategory,drink.strAlcoholic,drink.strGlass].filter(Boolean).join(' · '));
+    set('instructions',drink.strInstructions||'No instructions supplied.');
+    noteImage('photo',drink.strDrinkThumb,drink.strDrink,'photo-note');
+    $('ingredients').replaceChildren();for(let i=1;i<=15;i++){const ingredient=drink['strIngredient'+i]?.trim();if(!ingredient)continue;const li=document.createElement('li');li.textContent=[drink['strMeasure'+i]?.trim(),ingredient].filter(Boolean).join(' ');$('ingredients').append(li);}
+    set('drink-next',date.fallback?`The recipe has no usable edit date. Map its ID (${drink.idDrink||drink.strDrink}) to ${date.date}, then ask NASA for that day’s astronomy entry.`:`Take this recipe’s last-edit date, ${date.date}, and ask NASA what appeared in its astronomy archive that day.`);
+    $('drink-content').hidden=false;set('drink-progress','A random recipe returned. Its date is passed on.');
+  }
+  async function getSky() {
+    const date=state.data.date.date;showStep('sky',`Finding NASA’s entry for ${date}…`);
+    const endpoints=[`https://science.nasa.gov/wp-json/wp/v2/apod-basic/${date.slice(2).replaceAll('-','')}`,`https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY&date=${date}`];
+    let apod,error;
+    for(let i=0;i<endpoints.length;i++){
+      try{const data=await json('sky',endpoints[i]);if(data.date!==date||!plain(data.title))throw new Error('NASA returned no matching title/date.');apod={...data,title:plain(data.title)};break;}
+      catch(e){checkStopped();error=e;if(i===0)showStep('sky','NASA’s archive endpoint did not answer. Trying its public APOD endpoint…');}
+    }
+    if(!apod)throw error;state.data.apod=apod;state.data.skyWords=skyWords(apod);
+    if(!state.data.skyWords.length)throw new Error('The archive entry supplied no searchable words.');
+    set('apod-date',date);set('apod-title',apod.title);set('apod-explanation',plain(apod.explanation));
+    set('apod-credit',plain(apod.credit||apod.copyright||'Source: NASA APOD.'));
+    const media=apod.media_type==='image'?(apod.hdurl||(/\.(jpg|jpeg|png|webp)(\?|$)/i.test(apod.url||'')?apod.url:null)):null;
+    noteImage('apod-image',media,plain(apod.alt)||apod.title,'apod-image-note');
+    link('apod-link',apod.permalink||`https://apod.nasa.gov/apod/ap${date.slice(2).replaceAll('-','')}.html`);
+    set('sky-next',`Take “${state.data.skyWords[0]}” from this entry. Search artwork titles for that word, then randomly choose a matching artwork with an image and colour data.`);
+    $('sky-content').hidden=false;set('sky-progress','A real archive entry returned. Its words are passed on.');
+  }
+  async function getArt() {
+    for(const word of state.data.skyWords) {
+      const source=words(state.data.apod.title).includes(word)?'title':'explanation';
+      showStep('art',`Searching artwork titles for “${word}” from the NASA ${source}…`);
+      set('sky-next',`Take “${word}” from the NASA ${source}. Search artwork titles for this word, then randomly choose a matching public-domain artwork.`);
+      const params=new URLSearchParams({'query[match][title]':word,limit:'100',fields:'id,title,artist_display,date_display,image_id,color,is_public_domain,thumbnail,credit_line'});
+      const result=await json('art','https://api.artic.edu/api/v1/artworks/search?'+params,{spaced:true});
+      const candidates=(result.data||[]).filter(item=>item.image_id&&item.is_public_domain&&item.color&&['h','s','l'].every(key=>typeof item.color[key]==='number'&&Number.isFinite(item.color[key])));
+      if(!candidates.length){set('art-progress',`“${word}” returned no usable public-domain image. Trying another word from the same NASA entry…`);continue;}
+      const art=random(candidates);state.data.art=art;state.data.artWord=word;
+      const base=checkedURL(result.config?.iiif_url)||'https://www.artic.edu/iiif/2';
+      noteImage('art-image',`${base}/${encodeURIComponent(art.image_id)}/full/843,/0/default.jpg`,art.thumbnail?.alt_text||art.title,'art-image-note');
+      set('art-query',`Search: “${word}” · randomly selected from ${candidates.length} usable matches in this response.`);
+      set('art-title',art.title);set('art-artist',art.artist_display||'Artist not supplied.');set('art-description',art.date_display||'');set('art-credit',art.credit_line||'Art Institute of Chicago · public-domain image.');
+      link('art-link',`https://www.artic.edu/artworks/${art.id}`);
+      const {h,s,l}=art.color;set('art-next',`The museum reports this artwork’s dominant colour as HSL(${h}, ${s}%, ${l}%). Send that colour to The Color API and ask for its nearest name.`);
+      $('art-content').hidden=false;set('art-progress','A matching artwork returned. Its colour is passed on.');return;
+    }
+    throw new Error('None of the words tried from this NASA entry found a public-domain artwork with both an image and colour data. Retry can search the same words again; start creates a new chain.');
+  }
+  async function getColour() {
+    showStep('colour','Asking for the name of the artwork’s dominant colour…');
+    const {h,s,l}=state.data.art.color;
+    const params=new URLSearchParams({hsl:`${h},${s}%,${l}%`});
+    const colour=await json('colour','https://www.thecolorapi.com/id?'+params);
+    if(!colour.name?.value||!/^#[0-9a-f]{6}$/i.test(colour.hex?.value||''))throw new Error('The colour service returned no usable name or colour.');
+    state.data.colour=colour;
+    $('swatch').style.backgroundColor=colour.hex.value;
+    $('swatch').style.color=/^#[0-9a-f]{6}$/i.test(colour.contrast?.value||'')?colour.contrast.value:'#263d32';
+    $('swatch').setAttribute('aria-label',`${colour.name.value}, ${colour.hex.value}`);set('swatch',colour.hex.value);
+    set('colour-name',colour.name.value);
+    set('colour-description',colour.name.exact_match_name?`The service names ${colour.hex.value} “${colour.name.value}”.`:`The service’s nearest named colour is “${colour.name.value}” (${colour.name.closest_named_hex}). The artwork’s actual queried colour is ${colour.hex.value}.`);
+    set('colour-next',`Use “${colour.name.value}” as a book-title search. If the full name finds no cover, try words within that same name. Randomly pick one matching book.`);
+    $('colour-content').hidden=false;set('colour-progress','A colour name returned. The name is passed on.');
+  }
+  async function getBook() {
+    const colourName=state.data.colour.name.value;
+    for(const word of colourWords(colourName)){
+      showStep('book',`Searching book titles for “${word}”…`);
+      set('colour-next',`Take “${word}” from the colour name “${colourName}”. Search book titles, then randomly select one matching book with a cover.`);
+      const params=new URLSearchParams({title:word,limit:'40',fields:'key,title,author_name,first_publish_year,cover_i'});
+      const result=await json('book','https://openlibrary.org/search.json?'+params,{timeout:18000,spaced:true});
+      const candidates=(result.docs||[]).filter(book=>book.title&&book.cover_i&&/^\/works\/OL\d+W$/.test(book.key||''));
+      if(!candidates.length){set('book-progress',`No book cover found for “${word}”. Trying another word within the colour name…`);continue;}
+      const book=random(candidates);state.data.book=book;
+      const image=`https://covers.openlibrary.org/b/id/${book.cover_i}-L.jpg?default=false`;
+      noteImage('book-image',image,`Cover of ${book.title}`,'book-image-note');requestLink('book',image);
+      set('book-query',`Search: “${word}” · randomly selected from ${candidates.length} matches with cover IDs in this response.`);
+      set('book-title',book.title);set('book-author',(book.author_name||[]).join(', ')||'Author not supplied.');
+      set('book-year',book.first_publish_year?`First published: ${book.first_publish_year}`:'Publication year not supplied.');link('book-link','https://openlibrary.org'+book.key);
+      $('book-content').hidden=false;set('book-progress','A book returned. The chain has reached its last result.');return;
+    }
+    throw new Error('No book with a cover ID was returned for this colour name or its individual words. Retry this step, or start a new chain.');
+  }
+  const steps=[getDrink,getSky,getArt,getColour,getBook];
+  function busy(value){state.busy=value;$('start').disabled=value;$('stop').hidden=!value;$('retry').disabled=value;}
+  async function run(from){
+    if(state.busy)return;state.aborted=false;busy(true);$('problem').hidden=true;$('ending').hidden=true;
+    try{
+      for(state.index=from;state.index<steps.length;state.index++){checkStopped();await steps[state.index]();}
+      set('status','5/5 — The chain is complete. Click start to discover a different path.');
+      set('ending-text',`You started with ${state.data.drink.strDrink}. A date led to a sky; a word led to an artwork; its colour led to “${state.data.book.title}”.`);$('ending').hidden=false;
+    }catch(error){
+      const stage=names[state.index];set('status',state.aborted?'Stopped. Previous results are still here.':`The chain paused at step ${state.index+1}. Previous results are still here.`);
+      set(stage+'-progress',state.aborted?'Stopped by you.':`This request could not continue: ${error.message}`);
+      set('problem-text',state.aborted?'The current request was stopped. Retry resumes from this step.':`${error.message} No sample result has been substituted. Retry resumes from this step.`);
+      $('problem').hidden=false;
+    }finally{busy(false);set('start','start again');}
+  }
+  function reset(){
+    state.index=0;state.data={};$('chain').hidden=false;
+    for(const name of names){$(name).hidden=true;$(name+'-content').hidden=true;$(name+'-requests').replaceChildren();set(name+'-progress','');}
+    for(const id of ['photo','apod-image','art-image','book-image']){const img=$(id);img.onload=null;img.onerror=null;img.removeAttribute('src');img.hidden=true;}
+    $('problem').hidden=true;$('ending').hidden=true;
+  }
+  $('start').addEventListener('click',()=>{if(state.busy)return;reset();run(0);});
+  $('retry').addEventListener('click',()=>run(state.index));
+  $('stop').addEventListener('click',()=>{state.aborted=true;state.controller?.abort();});
+})();
+</script>
+</body>
+</html>
