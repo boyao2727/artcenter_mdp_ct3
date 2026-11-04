@@ -1,0 +1,260 @@
+{
+  "title": "Air Dial development documentation",
+  "scope": "0.1.0 through 0.2.3. Version 0.2.3 is the final version for this documentation.",
+  "date_note": "Dates are local archive dates, not verified public release dates.",
+  "image_note": "Versions 0.1.0-0.2.0 use new diagrams based on surviving source notes. Versions 0.2.1-0.2.3 use archived production-renderer exports with test hand points. These are not live camera screenshots. The 0.2.2 and 0.2.3 HUD exports are identical.",
+  "versions": [
+    {
+      "version": "0.1.0",
+      "build": "1",
+      "title": "First prototype",
+      "changes": [
+        "Local Apple Vision tracking, with menu bar controls.",
+        "A full turn changes volume by 5 percentage points.",
+        "Palm-to-fist pauses; thumbs-up plays; side-palm swipes skip."
+      ],
+      "archive_date": "2026-10-14",
+      "evidence_file": "AirDial-0.1.0-beta-universal.zip",
+      "sha256": "6553ecbc27bebe57fb24e380fe981172f881669f5a1c926b562b160843422b30",
+      "release_notes": "AirDial 2/docs/RELEASE_NOTES.md",
+      "source_origin": "/Users/boyaozhang/Documents/GitHub/2/AirDial 2",
+      "evidence_type": "Application archive plus surviving source folder",
+      "visual": "assets/images/v0.1.0.svg",
+      "visual_type": "Source-based diagram"
+    },
+    {
+      "version": "0.1.1",
+      "build": "2",
+      "title": "Clearer hand tracking",
+      "changes": [
+        "Read each pose from the joints it needs.",
+        "Keep progress through short tracking gaps.",
+        "Add a live hand outline and manual test buttons."
+      ],
+      "archive_date": "2026-10-14",
+      "evidence_file": "AirDial-0.1.1-source.zip",
+      "sha256": "43244a5f9f7de6b93e676114bb9a41c499307a89ad24dfbcb09c90e53afd1cb9",
+      "release_notes": "AirDial/docs/RELEASE_NOTES.md",
+      "source_origin": "AirDial-0.1.1-source.zip",
+      "evidence_type": "Source archive",
+      "visual": "assets/images/v0.1.1.svg",
+      "visual_type": "Source-based diagram"
+    },
+    {
+      "version": "0.1.2",
+      "build": "3",
+      "title": "Whole-hand circles",
+      "changes": [
+        "Track whole-hand movement and refit the circle center.",
+        "Swipe an open palm left or right to change tracks.",
+        "Add a shared 1-second command cooldown."
+      ],
+      "archive_date": "2026-10-14",
+      "evidence_file": "AirDial-0.1.2-source.zip",
+      "sha256": "644cf64be980ea814d87afe83b8f348b6f918a1e4ce6e2388f806ab12b250038",
+      "release_notes": "AirDial/docs/RELEASE_NOTES.md",
+      "source_origin": "AirDial-0.1.2-source.zip",
+      "evidence_type": "Source archive",
+      "visual": "assets/images/v0.1.2.svg",
+      "visual_type": "Source-based diagram"
+    },
+    {
+      "version": "0.1.3",
+      "build": "4",
+      "title": "Continuous volume",
+      "changes": [
+        "Each valid 45° arc changes volume by 1 percentage point.",
+        "Use three hand points without counting the same motion twice.",
+        "Restore side-palm swipes and direct fist Pause."
+      ],
+      "archive_date": "2026-10-14",
+      "evidence_file": "AirDial-0.1.3-source.zip",
+      "sha256": "a70066d651446e52f41c9af0f27e4d9a277618860d76573928561fed6092b9e7",
+      "release_notes": "AirDial/docs/RELEASE_NOTES.md",
+      "source_origin": "AirDial-0.1.3-source.zip",
+      "evidence_type": "Source archive",
+      "visual": "assets/images/v0.1.3.svg",
+      "visual_type": "Source-based diagram"
+    },
+    {
+      "version": "0.1.4",
+      "build": "5",
+      "title": "Fewer false pauses",
+      "changes": [
+        "Hold a fist for 0.5 seconds to pause.",
+        "Block Pause during circle control and for 2 seconds afterward.",
+        "Accept a tilted thumb with a 0.5-second Play hold."
+      ],
+      "archive_date": "2026-10-14",
+      "evidence_file": "AirDial-0.1.4-source.zip",
+      "sha256": "954f13133e9e82223f92d3ad7ab3b2c658a87aa8761409f5829acdb5f93106ed",
+      "release_notes": "AirDial/docs/RELEASE_NOTES.md",
+      "source_origin": "AirDial-0.1.4-source.zip",
+      "evidence_type": "Source archive",
+      "visual": "assets/images/v0.1.4.svg",
+      "visual_type": "Source-based diagram"
+    },
+    {
+      "version": "0.1.5",
+      "build": "6",
+      "title": "A rotation lock",
+      "changes": [
+        "Rotate for 1.5 seconds before volume control starts.",
+        "Keep fist and thumb gestures available while waiting.",
+        "Discard the setup motion to prevent a volume jump."
+      ],
+      "archive_date": "2026-10-14",
+      "evidence_file": "AirDial-0.1.5-source.zip",
+      "sha256": "44e4c3f4e6a0677d0dec2ccbb3787cbc7816fee7eb788ff18b4a12f8b0bf1be3",
+      "release_notes": "AirDial/docs/RELEASE_NOTES.md",
+      "source_origin": "AirDial-0.1.5-source.zip",
+      "evidence_type": "Source archive",
+      "visual": "assets/images/v0.1.5.svg",
+      "visual_type": "Source-based diagram"
+    },
+    {
+      "version": "0.1.6",
+      "build": "7",
+      "title": "Easier volume setup",
+      "changes": [
+        "Prepare volume with 1.5 seconds of hand movement.",
+        "Allow straight movement during setup; only arcs change volume.",
+        "Shorten the fist Pause hold to 0.35 seconds."
+      ],
+      "archive_date": "2026-10-14",
+      "evidence_file": "AirDial-0.1.6-source.zip",
+      "sha256": "859feca5626b2c9ef0bdabc36731cb6b3efca2577511242f4920e9df751a25ff",
+      "release_notes": "AirDial/docs/RELEASE_NOTES.md",
+      "source_origin": "AirDial-0.1.6-source.zip",
+      "evidence_type": "Source archive",
+      "visual": "assets/images/v0.1.6.svg",
+      "visual_type": "Source-based diagram"
+    },
+    {
+      "version": "0.1.7",
+      "build": "8",
+      "title": "Background reliability",
+      "changes": [
+        "Keep gesture processing active when the guide is closed.",
+        "Fix volume preparation at low camera frame rates.",
+        "Keep the same 1.5-second setup and circle sensitivity."
+      ],
+      "archive_date": "2026-10-14",
+      "evidence_file": "AirDial-0.1.7-source.zip",
+      "sha256": "d8a9de3adce064c92e5b3c8c573dfa3f0c5756e7dbdff29f1214890a8a0d8598",
+      "release_notes": "AirDial/docs/RELEASE_NOTES.md",
+      "source_origin": "AirDial-0.1.7-source.zip",
+      "evidence_type": "Source archive",
+      "visual": "assets/images/v0.1.7.svg",
+      "visual_type": "Source-based diagram"
+    },
+    {
+      "version": "0.1.8",
+      "build": "9",
+      "title": "A moving fist",
+      "changes": [
+        "Pause after a 0.25-second fist hold.",
+        "Allow the fist to move while the hold completes.",
+        "Keep one Pause per hold and the existing volume protection."
+      ],
+      "archive_date": "2026-10-14",
+      "evidence_file": "AirDial-0.1.8-source.zip",
+      "sha256": "f1476819e68e111b18117519229620543065c069116c0f931461a5a567432264",
+      "release_notes": "AirDial/docs/RELEASE_NOTES.md",
+      "source_origin": "AirDial-0.1.8-source.zip",
+      "evidence_type": "Source archive",
+      "visual": "assets/images/v0.1.8.svg",
+      "visual_type": "Source-based diagram"
+    },
+    {
+      "version": "0.1.9",
+      "build": "10",
+      "title": "Native volume feedback",
+      "changes": [
+        "Show the macOS volume display after a successful gesture step.",
+        "Refresh the display as circling continues.",
+        "Keep the gesture rules from 0.1.8."
+      ],
+      "archive_date": "2026-10-15",
+      "evidence_file": "AirDial-0.1.9-source.zip",
+      "sha256": "e0dac95494a137088afd9017da99e1a89987332713b6f0c8a8c3db9adb1c3a25",
+      "release_notes": "AirDial/docs/RELEASE_NOTES.md",
+      "source_origin": "/Users/boyaozhang/Documents/Codex/2026-10-14/wo/outputs/AirDial",
+      "evidence_type": "Source archive",
+      "visual": "assets/images/v0.1.9.svg",
+      "visual_type": "Source-based diagram"
+    },
+    {
+      "version": "0.2.0",
+      "build": "11",
+      "title": "MediaPipe experiment",
+      "changes": [
+        "Replace Apple Vision with native MediaPipe hand tracking.",
+        "Run recognition in a separate, network-restricted service.",
+        "Keep the existing controls and gesture timing."
+      ],
+      "archive_date": "2026-10-20",
+      "evidence_file": "AirDial-0.2.0-mediapipe-exp1-source.zip",
+      "sha256": "30fafc38d67e0bde1facf2e20f2fd2c03a7dd4f325a77d5e8fdafdc05b3366a8",
+      "release_notes": "AirDial-MediaPipe-Experiment/docs/RELEASE_NOTES.md",
+      "source_origin": "/Users/boyaozhang/Documents/Codex/2026-10-14/wo/outputs/AirDial-MediaPipe-Experiment",
+      "evidence_type": "Source archive",
+      "visual": "assets/images/v0.2.0.svg",
+      "visual_type": "Source-based diagram"
+    },
+    {
+      "version": "0.2.1",
+      "build": "12",
+      "title": "A floating hand HUD",
+      "changes": [
+        "Add a translucent hand display with colored paths.",
+        "Drag it anywhere and remember its position.",
+        "Shorten volume preparation to 0.9 seconds."
+      ],
+      "archive_date": "2026-10-20",
+      "evidence_file": "AirDial-0.2.1-source.zip",
+      "sha256": "4bd2a39703e0fcdd64bcf184dd25cbf30ac3ee016781d691ab182024d2d4e899",
+      "release_notes": "AirDial-0.2.1/docs/RELEASE_NOTES.md",
+      "source_origin": "/Users/boyaozhang/Documents/Codex/2026-10-14/wo/outputs/AirDial-0.2.1",
+      "evidence_type": "Source archive",
+      "visual": "assets/images/v0.2.1.png",
+      "visual_type": "Archived HUD render with test points"
+    },
+    {
+      "version": "0.2.2",
+      "build": "13",
+      "title": "Lighter glass, faster setup",
+      "changes": [
+        "Make the HUD more transparent with a glowing border.",
+        "Use thicker lines and a longer fade-out.",
+        "Prepare volume in 0.6 seconds and track the index fingertip."
+      ],
+      "archive_date": "2026-10-20",
+      "evidence_file": "AirDial-0.2.2-source.zip",
+      "sha256": "dce9d60f6d924da1db060012dbadcb80112aeca88e47ad2deaa9595cc6c6c133",
+      "release_notes": "AirDial-0.2.2/docs/RELEASE_NOTES.md",
+      "source_origin": "/Users/boyaozhang/Documents/Codex/2026-10-14/wo/outputs/AirDial-0.2.2",
+      "evidence_type": "Source archive",
+      "visual": "assets/images/v0.2.2.png",
+      "visual_type": "Archived HUD render with test points"
+    },
+    {
+      "version": "0.2.3",
+      "build": "14",
+      "title": "Ready is not active",
+      "changes": [
+        "Volume ready no longer blocks Play or Pause.",
+        "A deliberate 0.25-second fist hold takes priority before a circle starts.",
+        "Only accepted circle motion starts volume control and renews Pause protection."
+      ],
+      "archive_date": "2026-10-20",
+      "evidence_file": "AirDial-0.2.3-source.zip",
+      "sha256": "78e5e018ec816b75a9b941b693dfe9e481a1d87394d1311e460a506369d49d68",
+      "release_notes": "AirDial-0.2.3/docs/RELEASE_NOTES.md",
+      "source_origin": "/Users/boyaozhang/Documents/Codex/2026-10-14/wo/outputs/AirDial-0.2.3",
+      "evidence_type": "Source archive",
+      "visual": "assets/images/v0.2.3.png",
+      "visual_type": "Archived HUD render with test points"
+    }
+  ]
+}
